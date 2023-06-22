@@ -1,0 +1,42 @@
+<ion-content [fullscreen]="true">
+  <ion-list lines="none">
+    <ng-container *ngIf="device$ | async as device">
+      <ion-card>
+        <ion-card-header>
+          <ion-row>
+            <ion-col>
+          <ion-card-title>{{device.name}}</ion-card-title></ion-col>
+          <ion-col><ion-card-subtitle>{{device.location}}</ion-card-subtitle></ion-col>
+          <ion-col><ion-button (click)="sendCommand()" expand="block"><ion-icon slot="icon-only" size="small" name="cog-outline"></ion-icon></ion-button>
+          </ion-col></ion-row>
+        </ion-card-header>
+        
+        <ng-container *ngIf="device.last_measurement">
+        <ion-card-content>
+          <p>{{device.last_measurement.datetime  | date:"hh:mm:ss dd/MM/yy" }} - Last measurement values:</p>
+          <ion-label class="center-align spaced">
+            <span class="center-align"><ion-icon size="large" name="thermometer-outline"></ion-icon>{{device.last_measurement.temperature | measurementUnit:'°C' }}</span>
+            <span class="center-align"><ion-icon size="large" name="speedometer-outline"></ion-icon>{{device.last_measurement.pressure | measurementUnit:'Pa' }}</span>
+            <span class="center-align"><ion-icon size="large" name="water-outline"></ion-icon>{{device.last_measurement.humidity | measurementUnit:'%' }}</span>
+          </ion-label>
+        </ion-card-content>
+        </ng-container>
+      
+        <ion-button class="center-align" fill="solid" [routerLink]="['/measurements', device.id]">
+          <ion-icon slot="start" name="analytics-outline"></ion-icon>
+          Measurements History</ion-button>
+      </ion-card>
+      <ng-container *ngIf="measurements$ | async as measurements">
+        <highcharts-chart class="chart" [Highcharts]="temperatureChart" [options]="temperatureChartOptions">
+        </highcharts-chart>
+        <highcharts-chart class="chart" [Highcharts]="pressureChart" [options]="pressureChartOptions">
+        </highcharts-chart>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="(isLoading$ | async) === true">
+      <ion-text>Loading device data...<ion-spinner></ion-spinner></ion-text>
+    </ng-container>
+  </ion-list>
+</ion-content>
+
+

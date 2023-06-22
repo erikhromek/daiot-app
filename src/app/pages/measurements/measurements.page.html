@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="analytics-outline" size="large" color="primary"></ion-icon>
+    </ion-buttons>
+    <ion-title>Measurements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+  <ion-list lines="inset">
+    <ng-container *ngIf="measurements$ | async as measurements">
+      <ng-container *ngIf="measurements.length; else noDataTemplate">
+        <ng-container *ngFor="let measurement of measurements">
+          <ion-item>
+            <ion-label>
+              <p><ion-icon size="large" name="time-outline"></ion-icon>{{measurement?.datetime  | date:"hh:mm:ss dd/MM/yy" }}</p>
+              <ion-label class="center-align spaced">
+                <span class="center-align "><ion-icon name="thermometer-outline"></ion-icon>{{measurement.temperature | measurementUnit:'°C' }}</span>
+                <span class="center-align"><ion-icon name="speedometer-outline"></ion-icon>{{measurement.pressure | measurementUnit:'Pa' }}</span>
+                <span class="center-align"><ion-icon name="water-outline"></ion-icon>{{measurement.humidity | measurementUnit:'%' }}</span>
+              </ion-label>
+            </ion-label>
+          </ion-item>
+        </ng-container> 
+      </ng-container>
+
+    <ng-template #noDataTemplate>
+      No measurements!
+      <ion-icon name="close-outline"></ion-icon>
+    </ng-template>
+
+    </ng-container>
+    <ng-container *ngIf="(isLoading$ | async) === true">
+    <ion-text>Loading measurements...
+      <ion-spinner></ion-spinner></ion-text>
+    </ng-container>
+  </ion-list>
+</ion-content>

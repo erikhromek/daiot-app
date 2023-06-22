@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="logo-ionic" size="large" color="primary"></ion-icon>
+    </ion-buttons>
+    <ion-title>DAIoT App</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <ng-container *ngIf="devices$ | async as devices">
+      <ng-container *ngIf="devices.length; else noDataTemplate">
+        <ng-container *ngFor="let device of devices">
+          <ion-item button detail="true" [routerLink]="['/devices', device.id]">
+            <ion-label>
+              <h3 class="center-align"><ion-icon size="large" name="hardware-chip-outline"></ion-icon> {{device.name}}</h3>
+              <ng-container *ngIf="device.last_measurement">
+              <p>{{device.last_measurement.datetime  | date:"hh:mm:ss dd/MM/yy" }} - Last measurement values: </p>
+              <ion-label class="center-align spaced">
+                <span class="center-align"><ion-icon size="large" name="thermometer-outline"></ion-icon>{{device.last_measurement.temperature | measurementUnit:'°C' }}</span>
+                <span class="center-align"><ion-icon size="large" name="speedometer-outline"></ion-icon>{{device.last_measurement.pressure | measurementUnit:'Pa' }}</span>
+                <span class="center-align"><ion-icon size="large" name="water-outline"></ion-icon>{{device.last_measurement.humidity | measurementUnit:'%' }}</span>
+              </ion-label>
+            </ng-container>
+            </ion-label>
+          </ion-item>
+        </ng-container> 
+      </ng-container>
+
+    <ng-template #noDataTemplate>
+    <ion-text>No devices!</ion-text>
+      <ion-icon name="close-outline"></ion-icon>
+    </ng-template>
+
+    </ng-container>
+    <ng-container *ngIf="(isLoading$ | async) === true">
+      <ion-text>Loading devices...
+        <ion-spinner></ion-spinner></ion-text>
+    </ng-container>
+  </ion-list>
+</ion-content>
